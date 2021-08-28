@@ -82,10 +82,23 @@ export const handle = async (event) => {
 
   await browser.close();
 
+  const s3 = new S3();
+
+  await s3
+    .putObject({
+      Bucket: "bucket-serverless-certificate",
+      Key: `${id}.pdf`,
+      ACL: "public-read",
+      Body: pdf,
+      ContentType: "application/pdf",
+    })
+    .promise();
+
   return {
     statusCode: 201,
     body: JSON.stringify({
-        message: "Certificate created!"
+        message: "Certificate created!",
+        url: `https://bucket-serverless-certificate.s3.sa-east-1.amazonaws.com/${id}.pdf`
     }),
     headers: {
         "Content-Type": "application/json",
