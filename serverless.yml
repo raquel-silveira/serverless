@@ -1,9 +1,9 @@
 service:
-  name: ignitecertificate
+  name: "ignitecertificate"
 
 plugins:
-  - serverless-offline
   - serverless-webpack
+  - serverless-offline
   - serverless-dynamodb-local
 
 custom:
@@ -17,19 +17,20 @@ custom:
     start:
       port: 8000
       inMemory: true
+      migrate: true
 
 provider:
   name: aws
-  runtime: nodejs14.x
   region: sa-east-1
+  runtime: nodejs14.x
 
 functions:
-  hello:
-    handler: src/functions/hello.handle
+  generateCertificate:
+    handler: src/functions/generateCertificate.handle
     events:
       - http:
-          path: /hello
-          method: GET
+          path: /generateCertificate
+          method: POST
           cors: true
 
 resources:
@@ -38,10 +39,10 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: users_certificates
-        ProvisionedThroughput: 
+        ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
-        AttributesDefinitions:
+        AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
         KeySchema:
